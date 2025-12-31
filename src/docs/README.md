@@ -15,7 +15,7 @@ The API documentation is implemented using OpenAPI 3.0 specification and served 
 - **Use Case**: For programmatic access, code generation tools, or importing into API clients
 
 ```bash
-curl http://localhost:3000/api/docs
+curl https://metabot-ai-backend-production.up.railway.app/api/docs
 ```
 
 ### Swagger UI (Interactive)
@@ -24,7 +24,7 @@ curl http://localhost:3000/api/docs
 - **Format**: Interactive web interface
 - **Use Case**: For exploring the API, testing endpoints, and viewing examples
 
-Open in browser: http://localhost:3000/api/docs/ui
+Open in browser: https://metabot-ai-backend-production.up.railway.app/api/docs/ui
 
 ## Documentation Structure
 
@@ -102,7 +102,7 @@ See [error-codes.md](./error-codes.md) for complete reference.
 
 ### Testing Endpoints in Swagger UI
 
-1. Open http://localhost:3000/api/docs/ui in your browser
+1. Open https://metabot-ai-backend-production.up.railway.app/api/docs/ui in your browser
 2. Click on an endpoint to expand it
 3. Click "Try it out" button
 4. Fill in the required parameters
@@ -124,21 +124,21 @@ See [error-codes.md](./error-codes.md) for complete reference.
 
 1. Open Postman
 2. Click "Import"
-3. Enter URL: `http://localhost:3000/api/docs`
+3. Enter URL: `https://metabot-ai-backend-production.up.railway.app/api/docs`
 4. Click "Import"
 
 #### Insomnia
 
 1. Open Insomnia
 2. Click "Create" → "Import From" → "URL"
-3. Enter: `http://localhost:3000/api/docs`
+3. Enter: `https://metabot-ai-backend-production.up.railway.app/api/docs`
 4. Click "Fetch and Import"
 
 #### VS Code REST Client
 
 1. Install REST Client extension
 2. Create a `.http` file
-3. Add: `@baseUrl = http://localhost:3000`
+3. Add: `@baseUrl = https://metabot-ai-backend-production.up.railway.app`
 4. Reference the OpenAPI spec for endpoint details
 
 ## Verification

@@ -37,11 +37,16 @@ async function verifySetup() {
   // 2. Check backend server
   console.log("\n2️⃣ Checking backend server...");
   try {
-    const response = await fetch("http://localhost:3000/api/retell/health", {
-      method: "GET",
-    });
+    const response = await fetch(
+      "https://metabot-ai-backend-production.up.railway.app/api/retell/health",
+      {
+        method: "GET",
+      }
+    );
     if (response.ok) {
-      console.log("   ✅ Backend server is running on http://localhost:3000");
+      console.log(
+        "   ✅ Backend server is running on https://metabot-ai-backend-production.up.railway.app"
+      );
     } else {
       console.log(`   ❌ Backend server returned status ${response.status}`);
       allGood = false;

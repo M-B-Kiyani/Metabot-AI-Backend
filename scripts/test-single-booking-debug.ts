@@ -6,7 +6,7 @@ import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 import { config } from "../src/config";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://metabot-ai-backend-production.up.railway.app";
 const API_KEY = config.auth.apiKey;
 const prisma = new PrismaClient();
 

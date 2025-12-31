@@ -182,8 +182,12 @@ async function main() {
   if (allPassed) {
     logger.info("\n🎉 All documentation checks passed!");
     logger.info("\nDocumentation endpoints:");
-    logger.info("  - OpenAPI JSON: http://localhost:3000/api/docs");
-    logger.info("  - Swagger UI: http://localhost:3000/api/docs/ui");
+    logger.info(
+      "  - OpenAPI JSON: https://metabot-ai-backend-production.up.railway.app/api/docs"
+    );
+    logger.info(
+      "  - Swagger UI: https://metabot-ai-backend-production.up.railway.app/api/docs/ui"
+    );
     process.exit(0);
   } else {
     logger.error("\n❌ Some documentation checks failed");
