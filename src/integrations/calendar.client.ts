@@ -152,35 +152,54 @@ export class CalendarClient {
   }
 
   /**
-   * Initialize from configuration file
-   * Loads service account key from file path specified in config
+   * Initialize from configuration file or JSON environment variable
+   * Loads service account key from file path or JSON string specified in config
    *
    * @throws CalendarAuthError if credentials file is invalid or missing
    */
   async initializeFromConfig(): Promise<void> {
     try {
-      const keyPath = config.googleCalendar.serviceAccountKeyPath;
+      let keyData: any;
 
-      if (!keyPath) {
+      // First, try to use JSON from environment variable (for Railway/cloud deployments)
+      if (config.googleCalendar.serviceAccountJson) {
+        logger.info(
+          "Loading Google Calendar credentials from JSON environment variable"
+        );
+        try {
+          keyData = JSON.parse(config.googleCalendar.serviceAccountJson);
+        } catch (parseError) {
+          throw new CalendarAuthError(
+            "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_JSON environment variable"
+          );
+        }
+      }
+      // Fallback to file path (for local development)
+      else if (config.googleCalendar.serviceAccountKeyPath) {
+        logger.info("Loading Google Calendar credentials from file path");
+        const keyPath = config.googleCalendar.serviceAccountKeyPath;
+
+        // Check if file exists
+        if (!fs.existsSync(keyPath)) {
+          throw new CalendarAuthError(
+            `Service account key file not found: ${keyPath}`
+          );
+        }
+
+        // Read and parse service account key file
+        const keyFileContent = fs.readFileSync(keyPath, "utf8");
+        keyData = JSON.parse(keyFileContent);
+      }
+      // No credentials provided
+      else {
         throw new CalendarAuthError(
-          "Google Calendar service account key path not configured"
+          "No Google Calendar credentials configured. Set either GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_KEY_PATH"
         );
       }
-
-      // Check if file exists
-      if (!fs.existsSync(keyPath)) {
-        throw new CalendarAuthError(
-          `Service account key file not found: ${keyPath}`
-        );
-      }
-
-      // Read and parse service account key file
-      const keyFileContent = fs.readFileSync(keyPath, "utf8");
-      const keyData = JSON.parse(keyFileContent);
 
       if (!keyData.client_email || !keyData.private_key) {
         throw new CalendarAuthError(
-          "Invalid service account key file: missing client_email or private_key"
+          "Invalid service account credentials: missing client_email or private_key"
         );
       }
 
@@ -199,9 +218,10 @@ export class CalendarClient {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
 
-      logger.error("Failed to load service account credentials from file", {
+      logger.error("Failed to load service account credentials", {
         error: errorMessage,
-        keyPath: config.googleCalendar.serviceAccountKeyPath,
+        hasJsonConfig: !!config.googleCalendar.serviceAccountJson,
+        hasFilePathConfig: !!config.googleCalendar.serviceAccountKeyPath,
       });
 
       throw new CalendarAuthError(

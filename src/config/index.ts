@@ -480,6 +480,7 @@ function buildGoogleCalendarConfig(): GoogleCalendarConfig {
     enabled: env.GOOGLE_CALENDAR_ENABLED,
     serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "",
     serviceAccountKeyPath: env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH || "",
+    serviceAccountJson: env.GOOGLE_SERVICE_ACCOUNT_JSON || "",
     calendarId: env.GOOGLE_CALENDAR_ID,
     timeZone: env.GOOGLE_CALENDAR_TIMEZONE,
     retryAttempts: env.GOOGLE_CALENDAR_RETRY_ATTEMPTS,
