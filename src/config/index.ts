@@ -98,6 +98,7 @@ export interface GoogleCalendarConfig {
   enabled: boolean;
   serviceAccountEmail: string;
   serviceAccountKeyPath: string;
+  serviceAccountKeyJson: string;
   calendarId: string;
   timeZone: string;
   retryAttempts: number;
@@ -272,6 +273,7 @@ const envSchema = z.object({
     .transform((val) => val === "true"),
   GOOGLE_SERVICE_ACCOUNT_EMAIL: z.string().optional(),
   GOOGLE_SERVICE_ACCOUNT_KEY_PATH: z.string().optional(),
+  GOOGLE_SERVICE_ACCOUNT_KEY_JSON: z.string().optional(),
   GOOGLE_CALENDAR_ID: z.string().default("primary"),
   GOOGLE_CALENDAR_TIMEZONE: z.string().default("Europe/London"),
   GOOGLE_CALENDAR_RETRY_ATTEMPTS: z
@@ -480,7 +482,7 @@ function buildGoogleCalendarConfig(): GoogleCalendarConfig {
     enabled: env.GOOGLE_CALENDAR_ENABLED,
     serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "",
     serviceAccountKeyPath: env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH || "",
-    serviceAccountJson: env.GOOGLE_SERVICE_ACCOUNT_JSON || "",
+    serviceAccountKeyJson: env.GOOGLE_SERVICE_ACCOUNT_KEY_JSON || "",
     calendarId: env.GOOGLE_CALENDAR_ID,
     timeZone: env.GOOGLE_CALENDAR_TIMEZONE,
     retryAttempts: env.GOOGLE_CALENDAR_RETRY_ATTEMPTS,

@@ -23,34 +23,73 @@ async function testGoogleCalendar() {
 
   console.log("✓ Google Calendar is enabled");
 
-  // Check service account key file
-  const keyPath = config.googleCalendar.serviceAccountKeyPath;
-  console.log(`\n📄 Checking service account key file: ${keyPath}`);
+  // Check service account key (JSON or file)
+  if (config.googleCalendar.serviceAccountKeyJson) {
+    console.log("\n📄 Checking service account key JSON configuration");
 
-  if (!fs.existsSync(keyPath)) {
-    console.log(`❌ Service account key file not found: ${keyPath}`);
-    console.log("\nPlease ensure:");
-    console.log(
-      "1. You have created a service account in Google Cloud Console"
-    );
-    console.log("2. You have downloaded the JSON key file");
-    console.log(
-      "3. The GOOGLE_SERVICE_ACCOUNT_KEY_PATH environment variable points to the correct file"
-    );
+    try {
+      const keyData = JSON.parse(config.googleCalendar.serviceAccountKeyJson);
+      console.log("✓ Service account key JSON is valid");
+
+      // Validate required fields
+      const requiredFields = ["client_email", "private_key", "project_id"];
+      for (const field of requiredFields) {
+        if (!keyData[field]) {
+          console.log(
+            `❌ Service account key JSON is missing required field: ${field}`
+          );
+          process.exit(1);
+        }
+      }
+      console.log("✓ Service account key JSON contains all required fields");
+    } catch (error) {
+      console.log(
+        `❌ Service account key JSON is invalid: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      process.exit(1);
+    }
+  } else if (config.googleCalendar.serviceAccountKeyPath) {
+    const keyPath = config.googleCalendar.serviceAccountKeyPath;
+    console.log(`\n📄 Checking service account key file: ${keyPath}`);
+
+    if (!fs.existsSync(keyPath)) {
+      console.log(`❌ Service account key file not found: ${keyPath}`);
+      console.log("\nPlease ensure:");
+      console.log(
+        "1. You have created a service account in Google Cloud Console"
+      );
+      console.log("2. You have downloaded the JSON key file");
+      console.log(
+        "3. The GOOGLE_SERVICE_ACCOUNT_KEY_PATH environment variable points to the correct file"
+      );
+      process.exit(1);
+    }
+
+    console.log("✓ Service account key file exists");
+  } else {
+    console.log("❌ No service account key configured");
+    console.log("\nPlease set either:");
+    console.log("1. GOOGLE_SERVICE_ACCOUNT_KEY_JSON with the JSON content, or");
+    console.log("2. GOOGLE_SERVICE_ACCOUNT_KEY_PATH with the file path");
     process.exit(1);
   }
 
-  console.log("✓ Service account key file exists");
-
   // Validate JSON format
-  console.log("\n🔍 Validating key file format...");
+  console.log("\n🔍 Validating key format...");
   let keyData: any;
   try {
-    const keyContent = fs.readFileSync(keyPath, "utf-8");
-    keyData = JSON.parse(keyContent);
+    if (config.googleCalendar.serviceAccountKeyJson) {
+      keyData = JSON.parse(config.googleCalendar.serviceAccountKeyJson);
+    } else {
+      const keyPath = config.googleCalendar.serviceAccountKeyPath;
+      const keyContent = fs.readFileSync(keyPath, "utf-8");
+      keyData = JSON.parse(keyContent);
+    }
 
     if (keyData.type !== "service_account") {
-      console.log("❌ Invalid key file: not a service account key");
+      console.log("❌ Invalid key: not a service account key");
       process.exit(1);
     }
 

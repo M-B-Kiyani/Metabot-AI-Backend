@@ -94,11 +94,12 @@ describe("Configuration Validator", () => {
       config.googleCalendar.enabled = true;
       config.googleCalendar.serviceAccountEmail = "test@example.com";
       config.googleCalendar.serviceAccountKeyPath = "";
+      config.googleCalendar.serviceAccountKeyJson = "";
 
       const result = validateGoogleCalendarConfig();
       expect(result.valid).toBe(false);
       expect(result.errors).toContain(
-        "GOOGLE_SERVICE_ACCOUNT_KEY_PATH is required when Google Calendar is enabled"
+        "Either GOOGLE_SERVICE_ACCOUNT_KEY_PATH or GOOGLE_SERVICE_ACCOUNT_KEY_JSON is required when Google Calendar is enabled"
       );
 
       config.googleCalendar.enabled = false;
@@ -233,8 +234,7 @@ describe("Configuration Validator", () => {
 
     it("should pass with valid HubSpot configuration", () => {
       config.hubspot.enabled = true;
-      config.hubspot.accessToken =
-        "your_hubspot_access_token_here";
+      config.hubspot.accessToken = "your_hubspot_access_token_here";
 
       const result = validateHubSpotConfig();
       expect(result.valid).toBe(true);
