@@ -254,7 +254,7 @@ const envSchema = z.object({
     .transform((val) => val === "true"),
 
   // CORS
-  ALLOWED_ORIGINS: z.string().default("http://localhost:5173"),
+  ALLOWED_ORIGINS: z.string().default("https://metabot-ai-frontend-production.up.railway.app"),
   ALLOWED_METHODS: z.string().default("GET,POST,PUT,PATCH,DELETE"),
   ALLOWED_HEADERS: z.string().default("Content-Type,Authorization"),
   CORS_CREDENTIALS: z

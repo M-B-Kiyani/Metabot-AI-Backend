@@ -285,18 +285,26 @@ export class BookingService {
       });
     }
 
-    // Trigger notifications (non-blocking)
-    this.notificationService.sendBookingConfirmation(booking).catch((error) => {
-      logger.error("Failed to send booking confirmation", {
-        bookingId: booking.id,
-        error: error instanceof Error ? error.message : String(error),
+    // Trigger notifications (non-blocking) and update confirmation flag on success
+    this.notificationService
+      .sendBookingConfirmation(booking)
+      .then(async () => {
+        // Update confirmation sent flag only on success
+        await this.bookingRepository.update(booking.id, {
+          confirmationSent: true,
+        });
+        logger.info("Booking confirmation sent and flag updated", {
+          bookingId: booking.id,
+        });
+      })
+      .catch((error) => {
+        logger.error("Failed to send booking confirmation", {
+          bookingId: booking.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
       });
-    });
 
-    // Update confirmation sent flag
-    await this.bookingRepository.update(booking.id, {
-      confirmationSent: true,
-    });
+    // Don't update confirmationSent flag here - it's now handled in the success callback above
 
     logger.info("Booking created successfully", {
       bookingId: booking.id,
