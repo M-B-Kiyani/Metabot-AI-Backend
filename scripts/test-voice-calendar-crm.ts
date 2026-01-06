@@ -4,7 +4,6 @@
  */
 
 import { config } from "../src/config";
-import { logger } from "../src/utils/logger";
 import { databaseClient } from "../src/config/database.client";
 import { BookingRepository } from "../src/repositories/booking.repository";
 import { BookingService } from "../src/services/booking.service";

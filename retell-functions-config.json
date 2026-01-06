@@ -1,0 +1,166 @@
+{
+  "functions": [
+    {
+      "name": "check_availability",
+      "description": "Check available appointment slots for a given date and time range",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format"
+          },
+          "time": {
+            "type": "string",
+            "description": "Preferred time in HH:MM format (24-hour)"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration in minutes (15, 30, 45, or 60)"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone (default: Europe/London)",
+            "default": "Europe/London"
+          }
+        },
+        "required": ["date", "time", "duration"]
+      }
+    },
+    {
+      "name": "create_booking",
+      "description": "Create a new appointment booking with all integrations",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Full name of the person booking"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address for confirmation"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format"
+          },
+          "time": {
+            "type": "string",
+            "description": "Time in HH:MM format (24-hour)"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration in minutes (15, 30, 45, or 60)"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number (optional)"
+          },
+          "company": {
+            "type": "string",
+            "description": "Company name (optional)"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone (default: Europe/London)",
+            "default": "Europe/London"
+          }
+        },
+        "required": ["name", "email", "date", "time", "duration"]
+      }
+    },
+    {
+      "name": "get_upcoming_appointments",
+      "description": "Get upcoming appointments for a user by email",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address to look up appointments"
+          }
+        },
+        "required": ["email"]
+      }
+    },
+    {
+      "name": "reschedule_appointment",
+      "description": "Reschedule an existing appointment",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the booking"
+          },
+          "appointment_id": {
+            "type": "string",
+            "description": "ID of the appointment to reschedule"
+          },
+          "new_date": {
+            "type": "string",
+            "description": "New date in YYYY-MM-DD format"
+          },
+          "new_time": {
+            "type": "string",
+            "description": "New time in HH:MM format (24-hour)"
+          },
+          "new_duration": {
+            "type": "integer",
+            "description": "New duration in minutes (optional, keeps original if not provided)"
+          }
+        },
+        "required": ["email", "appointment_id", "new_date", "new_time"]
+      }
+    },
+    {
+      "name": "cancel_appointment",
+      "description": "Cancel an existing appointment",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the booking"
+          },
+          "appointment_id": {
+            "type": "string",
+            "description": "ID of the appointment to cancel"
+          }
+        },
+        "required": ["email", "appointment_id"]
+      }
+    },
+    {
+      "name": "update_crm_contact",
+      "description": "Update or create a CRM contact with additional information",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the contact"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number (optional)"
+          },
+          "company": {
+            "type": "string",
+            "description": "Company name (optional)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes or inquiry details (optional)"
+          }
+        },
+        "required": ["email", "name"]
+      }
+    }
+  ]
+}

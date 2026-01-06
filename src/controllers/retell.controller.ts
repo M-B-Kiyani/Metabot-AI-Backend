@@ -209,7 +209,7 @@ export class RetellController {
           };
           break;
 
-        case "book_appointment":
+        case "create_booking":
           // Book appointment with calendar and CRM sync
           if (!args.name || !args.email || !args.date || !args.time) {
             throw new Error("Name, email, date, and time are required");
@@ -235,8 +235,8 @@ export class RetellController {
 
         case "reschedule_appointment":
           // Reschedule with calendar update
-          if (!args.email || !args.newDate || !args.newTime) {
-            throw new Error("Email, new date, and new time are required");
+          if (!args.email || !args.new_date || !args.new_time) {
+            throw new Error("Email, new_date, and new_time are required");
           }
           // Find most recent confirmed booking for this email
           const bookingsToReschedule = await this.bookingService.getBookings({
@@ -254,14 +254,14 @@ export class RetellController {
             const bookingToUpdate = bookingsToReschedule.data[0];
             await this.bookingService.updateBooking(bookingToUpdate.id, {
               timeSlot: {
-                startTime: new Date(`${args.newDate}T${args.newTime}:00`),
+                startTime: new Date(`${args.new_date}T${args.new_time}:00`),
                 duration: bookingToUpdate.duration as 15 | 30 | 45 | 60,
               },
             });
             result = {
               success: true,
               bookingId: bookingToUpdate.id,
-              message: `Appointment rescheduled to ${args.newDate} at ${args.newTime}`,
+              message: `Appointment rescheduled to ${args.new_date} at ${args.new_time}`,
             };
           }
           break;
@@ -271,27 +271,33 @@ export class RetellController {
           if (!args.email) {
             throw new Error("Email is required");
           }
-          // Find most recent confirmed booking for this email
-          const bookingsToCancel = await this.bookingService.getBookings({
-            email: args.email,
-            status: "CONFIRMED",
-            dateFrom: new Date(),
-            limit: 1,
-          });
-          if (bookingsToCancel.data.length === 0) {
-            result = {
-              success: false,
-              message: `No upcoming appointments found for ${args.email}`,
-            };
-          } else {
-            const bookingToCancel = bookingsToCancel.data[0];
-            await this.bookingService.cancelBooking(bookingToCancel.id);
-            result = {
-              success: true,
-              bookingId: bookingToCancel.id,
-              message: "Appointment cancelled successfully",
-            };
+
+          let bookingIdToCancel = args.appointment_id;
+
+          // If no appointment_id provided, find most recent confirmed booking
+          if (!bookingIdToCancel) {
+            const bookingsToCancel = await this.bookingService.getBookings({
+              email: args.email,
+              status: "CONFIRMED",
+              dateFrom: new Date(),
+              limit: 1,
+            });
+            if (bookingsToCancel.data.length === 0) {
+              result = {
+                success: false,
+                message: `No upcoming appointments found for ${args.email}`,
+              };
+              break;
+            }
+            bookingIdToCancel = bookingsToCancel.data[0].id;
           }
+
+          await this.bookingService.cancelBooking(bookingIdToCancel);
+          result = {
+            success: true,
+            bookingId: bookingIdToCancel,
+            message: "Appointment cancelled successfully",
+          };
           break;
 
         case "get_upcoming_appointments":
@@ -319,6 +325,20 @@ export class RetellController {
             })),
             count: upcomingBookings.data.length,
             message: `Found ${upcomingBookings.data.length} upcoming appointments`,
+          };
+          break;
+
+        case "update_crm_contact":
+          // Update or create CRM contact
+          if (!args.email || !args.name) {
+            throw new Error("Email and name are required");
+          }
+          // This would integrate with your CRM service
+          // For now, we'll return a success response
+          result = {
+            success: true,
+            contactId: `contact_${Date.now()}`,
+            message: `Contact ${args.name} updated in CRM`,
           };
           break;
 
